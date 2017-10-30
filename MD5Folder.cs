@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Threading;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -11,26 +9,68 @@ namespace MD5Folder
 {
     class Program
     {
-        static void ComputeMD5String(List<string> hashList, string name)
+        static string ComputeMD5String(string s)
         {
             MD5 md5 = MD5.Create();
-            byte[] data = md5.ComputeHash(Encoding.Default.GetBytes(name));
-            string hashname = BitConverter.ToString(data).Replace("-", String.Empty);
-            hashList.Add(hashname);
+            byte[] data = md5.ComputeHash(Encoding.Default.GetBytes(s));
+            string hashStr = BitConverter.ToString(data).Replace("-", String.Empty);
+
+            return hashStr;
         }
 
-        static void ComputeMD5File(List<string> hashList, string path)
+        static string ComputeMD5File(string path)
         {
             using (FileStream fs = File.OpenRead(path))
             {
                 MD5 md5 = MD5.Create();
+                string filename = Path.GetFileName(path);
                 byte[] fileData = new byte[fs.Length];
                 fs.Read(fileData, 0, (int)fs.Length);
                 byte[] checkSum = md5.ComputeHash(fileData);
                 string result = BitConverter.ToString(checkSum).Replace("-", String.Empty);
-                hashList.Add(result);
+                
+                return ComputeMD5String(filename + result);
             }
         }
+
+        static string ComputeMD5Folder(string path)
+        {
+            string folderName = Path.GetFileName(path);
+            StringBuilder result = new StringBuilder();
+            result.Append(folderName);
+
+            DirectoryInfo currFolder = new DirectoryInfo(path);
+            FileInfo[] files = currFolder.GetFiles();
+            DirectoryInfo[] folders = currFolder.GetDirectories();
+
+            List<Task<string>> filesTasks = new List<Task<string>>();
+            foreach (FileInfo f in files)
+            {
+                Task<string> fileTask = Task.Run(() => ComputeMD5File(f.FullName));
+                filesTasks.Add(fileTask);
+            }
+            Task.WaitAll(filesTasks.ToArray());
+            foreach(var t in filesTasks)
+            {
+                result.Append(t.Result);
+            }
+
+            List<Task<string>> foldersTasks = new List<Task<string>>();
+            foreach (DirectoryInfo f in folders)
+            {
+                Task<string> folderTask = Task.Run(() => ComputeMD5Folder(f.FullName));
+                foldersTasks.Add(folderTask);
+            }
+            Task.WaitAll(foldersTasks.ToArray());
+            foreach (var t in foldersTasks)
+            {
+                result.Append(t.Result);
+            }
+
+            return ComputeMD5String(result.ToString());
+        }
+
+        //let hash = md5(name + md5(content))
 
         static void Main(string[] args)
         {
@@ -46,52 +86,11 @@ namespace MD5Folder
                 folder = args[0];
             }
 
-
             if (Directory.Exists(folder))
             {
-                List<string> hashList = new List<string>();
-                string folderName = Path.GetFileName(folder);
-                ComputeMD5String(hashList, folderName);
-
-                /*foreach (string hash in hashList)
-                {
-                    Console.WriteLine(hash);
-                }
-                Console.ReadLine();*/
-
-                DirectoryInfo fld = new DirectoryInfo(folder);
-                FileInfo[] files = fld.GetFiles();
-
-                Parallel.ForEach(files, (currFile) => 
-                {
-                    ComputeMD5File(hashList, currFile.FullName);
-                    Console.WriteLine("Processing {0} on thread {1}", currFile, Thread.CurrentThread.ManagedThreadId);
-                });
-
-                /*foreach (FileInfo fi in files)
-                {
-                    ComputeMD5File(hashList, fi.FullName);
-                }*/
-
-                /*foreach (string hash in hashList)
-                {
-                    Console.WriteLine(hash);
-                }
-                Console.ReadLine();*/
-
-                string concatenatedHashes = string.Concat(hashList);
-
-                /*Console.WriteLine(concatenatedHashes);
-                Console.ReadLine();*/
-
-                List<string> finalHash = new List<string>();
-                ComputeMD5String(finalHash, concatenatedHashes);
+                string hash = ComputeMD5Folder(folder);
                 Console.WriteLine("MD5 of folder: " + folder);
-                foreach (string s in finalHash)
-                {
-                    Console.WriteLine(s);
-                }
-
+                Console.WriteLine(hash);    
                 Console.ReadLine();
             }
             else
