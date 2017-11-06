@@ -11,25 +11,29 @@ namespace MD5Folder
     {
         static string ComputeMD5String(string s)
         {
-            MD5 md5 = MD5.Create();
-            byte[] data = md5.ComputeHash(Encoding.Default.GetBytes(s));
-            string hashStr = BitConverter.ToString(data).Replace("-", String.Empty);
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] data = md5.ComputeHash(Encoding.Default.GetBytes(s));
+                string hashStr = BitConverter.ToString(data).Replace("-", String.Empty);
 
-            return hashStr;
+                return hashStr;
+            }
         }
 
         static string ComputeMD5File(string path)
         {
             using (FileStream fs = File.OpenRead(path))
             {
-                MD5 md5 = MD5.Create();
-                string filename = Path.GetFileName(path);
-                byte[] fileData = new byte[fs.Length];
-                fs.Read(fileData, 0, (int)fs.Length);
-                byte[] checkSum = md5.ComputeHash(fileData);
-                string result = BitConverter.ToString(checkSum).Replace("-", String.Empty);
-                
-                return ComputeMD5String(filename + result);
+                using (MD5 md5 = MD5.Create())
+                {
+                    string filename = Path.GetFileName(path);
+                    byte[] fileData = new byte[fs.Length];
+                    fs.Read(fileData, 0, (int)fs.Length);
+                    byte[] checkSum = md5.ComputeHash(fileData);
+                    string result = BitConverter.ToString(checkSum).Replace("-", String.Empty);
+
+                    return ComputeMD5String(filename + result);
+                }
             }
         }
 
