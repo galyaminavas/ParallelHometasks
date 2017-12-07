@@ -1,10 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace BSTParallel
 {
     class Tree
@@ -50,109 +43,6 @@ namespace BSTParallel
             }
             return null;
         }
-
-        //public void Insert(int k, int v)
-        //{
-        //    var newNode = new Node(k, v);
-
-        //    if (root == null)
-        //    {
-        //        lock (this)
-        //        {
-        //            root = newNode;
-        //            nodesCount++;
-        //            return;
-        //        }
-        //    }
-
-        //    Node currParent = null;
-        //    Node curr = root;
-
-        //    while (curr != null)
-        //    {
-        //        if (currParent != null)
-        //        {
-        //            lock (currParent)
-        //            {
-        //                lock (curr)
-        //                {
-        //                    if (k == curr.key)
-        //                        return;
-        //                    else
-        //                    {
-        //                        currParent = curr;
-        //                        if (k < curr.key)
-        //                        {
-        //                            curr = curr.leftChild;
-        //                        }
-        //                        else
-        //                        {
-        //                            curr = curr.rightChild;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            lock (curr)
-        //            {
-        //                if (k == curr.key)
-        //                    return;
-        //                else
-        //                {
-        //                    currParent = curr;
-        //                    if (k < curr.key)
-        //                    {
-        //                        curr = curr.leftChild;
-        //                    }
-        //                    else
-        //                    {
-        //                        curr = curr.rightChild;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    //curr == null, currParent != null
-        //    lock (currParent)
-        //    {
-        //        if (currParent.parent != null)
-        //        {
-        //            lock (currParent.parent)
-        //            {
-        //                if (k < currParent.key)
-        //                {
-        //                    newNode.parent = currParent;
-        //                    currParent.leftChild = newNode;
-        //                }
-        //                else
-        //                {
-        //                    newNode.parent = currParent;
-        //                    currParent.rightChild = newNode;
-        //                }
-        //            }
-        //            nodesCount++;
-        //        }
-        //        else
-        //        {
-        //            if (k < currParent.key)
-        //            {
-        //                newNode.parent = currParent;
-        //                currParent.leftChild = newNode;
-
-        //            }
-        //            else
-        //            {
-        //                newNode.parent = currParent;
-        //                currParent.rightChild = newNode;
-
-        //            }
-        //            nodesCount++;
-        //        }
-
-        //    }   
-        //}
 
         public void Insert(int k, int v)
         {
@@ -307,25 +197,14 @@ namespace BSTParallel
                                     {
                                         node.key = succ.key;
                                         node.value = succ.value;
-                                        //if (succ.parent.leftChild == succ)
-                                            succ.parent.leftChild = null;
-                                        //else
-                                            //succ.parent.rightChild = null;
+                                        succ.parent.leftChild = null;
                                     }
                                     else
                                     {
                                         node.key = succ.key;
                                         node.value = succ.value;
-                                        //if (succ.parent.leftChild == succ)
-                                        //{
-                                            succ.parent.leftChild = succ.rightChild;
-                                            succ.rightChild.parent = succ.parent;
-                                        //}
-                                        //else
-                                        //{
-                                        //    succ.parent.rightChild = succ.rightChild;
-                                        //    succ.rightChild.parent = succ.parent;
-                                        //}   
+                                        succ.parent.leftChild = succ.rightChild;
+                                        succ.rightChild.parent = succ.parent;  
                                     }
                                 }
                             }
@@ -386,9 +265,6 @@ namespace BSTParallel
         {
             Node succ = null;
 
-            //if (curr == null)
-            //    return succ;
-
             if (curr.leftChild == null && curr.rightChild == null)
                 return succ;
             else if (curr.leftChild == null)
@@ -407,53 +283,5 @@ namespace BSTParallel
                 return succ;
             }
         }
-
-        //internal int Height(Node n)
-        //{
-        //    if (n == null)
-        //    {
-        //        return 0;
-        //    }
-        //    else
-        //    {
-        //        var leftHeight = Height(n.leftChild);
-        //        var rightHeight = Height(n.rightChild);
-        //        if (leftHeight > rightHeight)
-        //        {
-        //            return leftHeight + 1;
-        //        }
-        //        else
-        //        {
-        //            return rightHeight + 1;
-        //        }
-        //    }
-        //}
-
-        //internal void PrintLevel(Node r, int level)
-        //{
-        //    if (r == null)
-        //    {
-        //        return;
-        //    }
-        //    if (level == 1)
-        //    {
-        //        Console.Write("{00} ", r.value);
-        //    }
-        //    else
-        //    {
-        //        PrintLevel(r.leftChild, level - 1);
-        //        PrintLevel(r.rightChild, level - 1);
-        //    }
-        //}
-
-        //internal void PrintLevelOrderTraversal()
-        //{
-        //    int h = Height(root);
-        //    for (int i = 0; i <= h; i++)
-        //    {
-        //        PrintLevel(root, i);
-        //        Console.WriteLine();
-        //    }
-        //}
     }
 }
