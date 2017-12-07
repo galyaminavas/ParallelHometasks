@@ -1,4 +1,4 @@
-Fine synchronization through locking.
+Fine synchronization through locks.
 
 Runtime comparison for Sequential and Parallel trees on random tests:
 
