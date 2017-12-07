@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -20,17 +17,12 @@ namespace BSTParallel
             int[] arrInsert = new int[10000000];
             for (int i = 0; i < arrInsert.Length; i++)
             {
-                arrInsert[i] = rnd.Next(1, 5000000);
-            }
-            int[] arrSearch = new int[1000000];
-            for (int i = 0; i < arrSearch.Length; i++)
-            {
-                arrSearch[i] = rnd.Next(1, 5000000);
+                arrInsert[i] = rnd.Next(1, 10000000);
             }
             int[] arrRemove = new int[1000000];
-            for (int i = 0; i < arrSearch.Length; i++)
+            for (int i = 0; i < arrRemove.Length; i++)
             {
-                arrRemove[i] = rnd.Next(1, 5000000);
+                arrRemove[i] = rnd.Next(1, 10000000);
             }
 
 
@@ -43,9 +35,9 @@ namespace BSTParallel
             Console.WriteLine("Sequential runtime for inserting: " + swSeq.Elapsed.ToString());
 
             swSeq.Restart();
-            for (int i = 0; i < arrSearch.Length; i++)
+            for (int i = 0; i < arrInsert.Length; i++)
             {
-                treeSeq.Search(arrSearch[i]);
+                treeSeq.Search(arrInsert[i]);
             }
             swSeq.Stop();
             Console.WriteLine("Sequential runtime for searching: " + swSeq.Elapsed.ToString());
@@ -57,9 +49,6 @@ namespace BSTParallel
             }
             swSeq.Stop();
             Console.WriteLine("Sequential runtime for removing: " + swSeq.Elapsed.ToString());
-
-            if (treeSeq.root == null)
-                Console.WriteLine("Tree is empty");
 
             Console.WriteLine();
 
@@ -74,7 +63,7 @@ namespace BSTParallel
             Console.WriteLine("Parallel runtime for inserting: " + swPar.Elapsed.ToString());
 
             swPar.Restart();
-            Parallel.ForEach(arrSearch, k =>
+            Parallel.ForEach(arrInsert, k =>
             {
                 int j = k;
                 treePar.Search(j);
@@ -90,9 +79,6 @@ namespace BSTParallel
             });
             swPar.Stop();
             Console.WriteLine("Parallel runtime for removing: " + swPar.Elapsed.ToString());
-
-            if (treePar.root == null)
-                Console.WriteLine("Tree is empty");
 
             Console.ReadKey();
         }
