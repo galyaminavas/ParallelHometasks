@@ -1,4 +1,4 @@
-namespace BSTParallel
+﻿namespace BSTParallel
 {
     class Node
     {

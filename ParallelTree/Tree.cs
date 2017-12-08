@@ -1,3 +1,5 @@
+﻿using System;
+
 namespace BSTParallel
 {
     class Tree
@@ -139,6 +141,7 @@ namespace BSTParallel
             lock (x)
             {
                 if (x.leftChild == null)
+
                     return x;
             }
             return Min(x.leftChild);
@@ -281,6 +284,54 @@ namespace BSTParallel
             {
                 succ = Min(curr.rightChild);
                 return succ;
+            }
+        }
+
+        internal int Height(Node n)
+        {
+            if (n == null)
+            {
+                return 0;
+            }
+            else
+            {
+                var leftHeight = Height(n.leftChild);
+                var rightHeight = Height(n.rightChild);
+                if (leftHeight > rightHeight)
+                {
+                    return leftHeight + 1;
+                }
+                else
+                {
+                    return rightHeight + 1;
+                }
+            }
+        }
+
+        internal void PrintLevel(Node r, int level)
+        {
+            if (r == null)
+            {
+                return;
+            }
+            if (level == 1)
+            {
+                Console.Write("{00} ", r.value);
+            }
+            else
+            {
+                PrintLevel(r.leftChild, level - 1);
+                PrintLevel(r.rightChild, level - 1);
+            }
+        }
+
+        internal void PrintLevelOrderTraversal()
+        {
+            int h = Height(root);
+            for (int i = 0; i <= h; i++)
+            {
+                PrintLevel(root, i);
+                Console.WriteLine();
             }
         }
     }
