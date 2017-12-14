@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -42,6 +41,24 @@ namespace WebPagesDownload
                 links[i] = rgx2.Replace(links[i], "");
             }
             return links;
+        }
+
+        public async Task LinksInfo(string addr)
+        {
+            Console.WriteLine("Web page address: " + addr);
+            Console.WriteLine();
+
+            var mainPage = await DownloadPage(addr);
+            var innerPages = FindLinks(mainPage);
+            Console.WriteLine("Wait for it...\n");
+            foreach (var p in innerPages)
+            {
+                var dp = await DownloadPage(p);
+                var len = dp.Length;
+                Console.WriteLine("Page: " + p + " -- Size: " + len);
+            }
+            Console.WriteLine();
+            Console.WriteLine("That's all.");
         }
     }
 }
