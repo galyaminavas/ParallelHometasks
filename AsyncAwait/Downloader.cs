@@ -11,7 +11,7 @@ namespace WebPagesDownload
         {
             using (WebClient client = new WebClient())
             {
-                String content = "";
+                string content = "";
                 try
                 {
                     content = await client.DownloadStringTaskAsync(address);
@@ -28,7 +28,7 @@ namespace WebPagesDownload
         {
             //<a href="http://...">
             Regex tagRX = new Regex(@"<a href=("")http(s)?://[a-zA-Z0-9-_\.~/:#\?=%&;\+@!\$\*',\[\]\(\)]*("")>");
-            var matches = tagRX.Matches(mainPage);
+            MatchCollection matches = tagRX.Matches(mainPage);
             string[] links = new string[matches.Count];
             string pattern1 = @"<a href=("")";
             string pattern2 = @"("")>";
@@ -48,13 +48,13 @@ namespace WebPagesDownload
             Console.WriteLine("Web page address: " + addr);
             Console.WriteLine();
 
-            var mainPage = await DownloadPage(addr);
-            var innerPages = FindLinks(mainPage);
+            string mainPage = await DownloadPage(addr);
+            string[] innerPages = FindLinks(mainPage);
             Console.WriteLine("Wait for it...\n");
-            foreach (var p in innerPages)
+            foreach (string p in innerPages)
             {
-                var dp = await DownloadPage(p);
-                var len = dp.Length;
+                string dp = await DownloadPage(p);
+                int len = dp.Length;
                 Console.WriteLine("Page: " + p + " -- Size: " + len);
             }
             Console.WriteLine();
